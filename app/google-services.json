@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1011299980262",
+    "firebase_url": "https://new-histogram-5d502.firebaseio.com",
+    "project_id": "new-histogram-5d502",
+    "storage_bucket": "new-histogram-5d502.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1011299980262:android:ce237136287b305d077c27",
+        "android_client_info": {
+          "package_name": "com.example.newhistogram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1011299980262-1e8duqs6rgek0kbh68g0g26t1ha876s2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAo9l3vK4Ve4XsY6cKn3ensqX0MalUy9zw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1011299980262-1e8duqs6rgek0kbh68g0g26t1ha876s2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
