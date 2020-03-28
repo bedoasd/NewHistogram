@@ -4,12 +4,19 @@ package com.example.newhistogram;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.Image;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 
 import android.widget.ImageView;
@@ -32,16 +39,22 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImagesActivity extends AppCompatActivity {
+public class ImagesActivity extends AppCompatActivity implements ImageAdapter.onlikeclic {
 
     private RecyclerView mRecyclerView;
-   private ImageAdapter mAdapter;
+    private ImageAdapter mAdapter;
     private ProgressBar mProgressCircle;
     private DatabaseReference mDatabaseRef;
     private FirebaseDatabase mfiredatabase;
-    // I prefer to decalre variables to namess describe them
-    // uploadsList
+
     private List<Upload> uploads ;
+
+    private int position_of_image;
+    String image_liked_url;
+    int No_likes=0;
+
+  //  firebase for like node
+    private DatabaseReference   likereference;
 
 
     @Override
@@ -50,12 +63,6 @@ public class ImagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_images);
 
 
-        // try to read about ButterKnife if you do't know MVVM
-        // but you (must) learn MVVM
-        // databinding and Butterknife is the alternative of findViewBy Id
-        // but databinding used with mvvm, so I asked you to learn Butterknife
-        // if you don't know MVVM
-        // search about Coding with nerds on youtupe
         mRecyclerView = findViewById(R.id.recycler);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
@@ -69,16 +76,9 @@ public class ImagesActivity extends AppCompatActivity {
         mDatabaseRef = mfiredatabase.getReference("uploads");
 
 
-        // hwa enta machy ma3 firebase ma3 meen ?
-      // kza 7d l3aytlma t4t3l m3ya zay coding
-        // here you retreive the image data (name and URL ) from the firebase database
-        // but you save the url in firebase database
-        // and saved the image in FireBaseStorage
-        // you get the error ?
-        // you must Retrieve the image from the Storage Firebase itself
-        // here you just retreive the url ok how can i connect mobilr to run?
 
         uploads = new ArrayList<>();
+
         mDatabaseRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -91,6 +91,7 @@ public class ImagesActivity extends AppCompatActivity {
                 mAdapter = new ImageAdapter(ImagesActivity.this, uploads);
 
                 mRecyclerView.setAdapter(mAdapter);
+                mAdapter.setonitemclicklistener(ImagesActivity.this);
                 mProgressCircle.setVisibility(View.INVISIBLE);
             }
 
@@ -100,9 +101,26 @@ public class ImagesActivity extends AppCompatActivity {
                 mProgressCircle.setVisibility(View.INVISIBLE);
             }
         });
+      //  GetImageUrl_and_upload_like();
+      //  String name=uploads.get(position_of_image).getClass().getName();
+     //   Toast.makeText(this, ""+name, Toast.LENGTH_SHORT).show();
     }
 
+    ///interface to get position
+    @Override
+    public void onitemclick(int position) {
+        position_of_image=position;
+    }
 
+    public void GetImageUrl_and_upload_like(){
+      image_liked_url = uploads.get(position_of_image).getImageUrl();
+      likereference=FirebaseDatabase.getInstance().getReference("Like");
+
+        Like like=new Like(image_liked_url,No_likes);
+        String uploadid=likereference.push().getKey();
+        mDatabaseRef.child(uploadid).setValue(like);
+
+    }
 }
 
 

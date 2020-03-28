@@ -132,32 +132,18 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Uri uri) {
                              mImageUri =uri;
-                            Log.d("IMAGESAPP uri", "" + uri);
-                            Log.d("IMAGESAPP 2uri",  "" + mImageUri);
 
 
-                            // nta grbt ?
+
                             Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                            Upload upload=new Upload(mEditTextFileName.getText().toString().trim()
+                             Upload upload=new Upload(mEditTextFileName.getText().toString().trim()
                                     , mImageUri.toString());
 
-                            //  wait for me I get the code
-                            // let's describe what happen here
-                            // here you take an image from gallery and upload it to "Storage References" in firebase
-                            // then you take the uri of the Uploaded image on firebase and save it in new child in firebase data
-                            // untill now all the process is correctly
+
                             String uploadid=mDatabaseRef.push().getKey();
                             mDatabaseRef.child(uploadid).setValue(upload);
-                            Log.d("IMAGESAPP name",  "" + upload.getName());
-                            Log.d("IMAGESAPP link",  "" + upload.getImageUrl());
 
-                            // run keda b2a
-                            // e4t8aal ?
-                            //3awz akollak haga
-                            //hwa by run 3ady bs elmoshkela iny lma ba2fl w aft7 elswar
-                            // mana 34ar f ..b l2 anat a2zsod hb2ra  lma ebllt2yf lo msbh bty4t8zlh brrd o ?
-                              //name bs  tmam ?
-                            //wa5d ballak mn el elmo4kella ?
+
                         }
                     });
 
