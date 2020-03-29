@@ -53,6 +53,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 .fit()
                 .centerCrop()
                 .into(holder.imageView);
+        int number=uploadCurrent.getNumber_likes();
+        String num=String.valueOf(number);
+        holder.NO_likes.setText(num);
 
     }
 
@@ -68,10 +71,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         public TextView NO_likes;
         private Button like;
         private Button share;
-        int x;
 
-        FirebaseDatabase database;
-        DatabaseReference datref;
 
 
         public ImageViewHolder(View itemView) {
@@ -99,6 +99,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     }
     public interface  onlikeclic{
         void onitemclick(int position);
+
     }
     public void setonitemclicklistener(onlikeclic listener){
         mlistener=listener;

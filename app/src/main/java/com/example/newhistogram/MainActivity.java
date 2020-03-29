@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -46,10 +48,11 @@ public class MainActivity extends AppCompatActivity {
         private StorageReference mStorageRef;
         private DatabaseReference mDatabaseRef;
         private FirebaseStorage storage;
+        private FirebaseAuth mAuth;
 
 
         private StorageTask mUploadTask;
-         private  String mimage;
+        private  String mimage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         mEditTextFileName = findViewById(R.id.enter_file_name);
         mImageView = findViewById(R.id.image_view);
         mProgressBar = findViewById(R.id.progrees_bar);
+
+
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
@@ -133,15 +138,15 @@ public class MainActivity extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                              mImageUri =uri;
 
-
+                            String id=mDatabaseRef.push().getKey();
 
                             Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                              Upload upload=new Upload(mEditTextFileName.getText().toString().trim()
-                                    , mImageUri.toString());
+                                    , mImageUri.toString(),0,id);
 
 
-                            String uploadid=mDatabaseRef.push().getKey();
-                            mDatabaseRef.child(uploadid).setValue(upload);
+
+                            mDatabaseRef.child(id).setValue(upload);
 
 
                         }

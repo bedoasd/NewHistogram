@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,6 +57,7 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
 
   //  firebase for like node
     private DatabaseReference   likereference;
+    private  FirebaseAuth mAuth;
 
 
     @Override
@@ -72,8 +75,7 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
 
 
         mProgressCircle = findViewById(R.id.progress_circle);
-        mfiredatabase = FirebaseDatabase.getInstance();
-        mDatabaseRef = mfiredatabase.getReference("uploads");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
 
 
@@ -93,6 +95,7 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
                 mRecyclerView.setAdapter(mAdapter);
                 mAdapter.setonitemclicklistener(ImagesActivity.this);
                 mProgressCircle.setVisibility(View.INVISIBLE);
+
             }
 
             @Override
@@ -101,26 +104,20 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
                 mProgressCircle.setVisibility(View.INVISIBLE);
             }
         });
-      //  GetImageUrl_and_upload_like();
-      //  String name=uploads.get(position_of_image).getClass().getName();
-     //   Toast.makeText(this, ""+name, Toast.LENGTH_SHORT).show();
     }
 
     ///interface to get position
     @Override
     public void onitemclick(int position) {
         position_of_image=position;
-    }
-
-    public void GetImageUrl_and_upload_like(){
-      image_liked_url = uploads.get(position_of_image).getImageUrl();
-      likereference=FirebaseDatabase.getInstance().getReference("Like");
-
-        Like like=new Like(image_liked_url,No_likes);
-        String uploadid=likereference.push().getKey();
-        mDatabaseRef.child(uploadid).setValue(like);
+        int num=uploads.get(position_of_image).getNumber_likes();
+        int num2=num++;
+        int num1=uploads.get(position_of_image).setNumber_likes(num2);
+        Toast.makeText(this, ""+num1, Toast.LENGTH_SHORT).show();
 
     }
+
+
 }
 
 
