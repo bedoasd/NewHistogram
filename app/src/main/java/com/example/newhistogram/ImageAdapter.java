@@ -31,6 +31,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     private Context mContext;
     private List<Upload> mUploads;
     private  onlikeclic  mlistener;
+
     public ImageAdapter(Context context, List<Upload> uploads) {
         mContext = context;
         mUploads = uploads;
@@ -46,16 +47,17 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     @Override
     public void onBindViewHolder(final ImageViewHolder holder, final int position) {
         final Upload uploadCurrent = mUploads.get(position);
+
         holder.textViewName.setText(uploadCurrent.getName());
+
         Picasso.with(mContext)
                 .load(uploadCurrent.getImageUrl())
                 .placeholder(R.mipmap.ic_launcher)
                 .fit()
                 .centerCrop()
                 .into(holder.imageView);
-        int number=uploadCurrent.getNumber_likes();
-        String num=String.valueOf(number);
-        holder.NO_likes.setText(num);
+        
+        holder.NO_likes.setText(String.valueOf(uploadCurrent.getNumber_likes()));
 
     }
 
@@ -69,7 +71,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         public TextView textViewName;
         public ImageView imageView;
         public TextView NO_likes;
-        private Button like;
+        private ImageView like;
         private Button share;
 
 
@@ -84,6 +86,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             like = itemView.findViewById(R.id.like);
             like.setOnClickListener(this);
 
+
         }
 
         @Override
@@ -92,6 +95,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
             int position=getAdapterPosition();
             if (position!=RecyclerView.NO_POSITION){
                 mlistener.onitemclick(position);
+
             }
              }
 

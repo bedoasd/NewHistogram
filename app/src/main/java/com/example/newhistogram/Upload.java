@@ -11,6 +11,7 @@ public class Upload {
 
 
 
+
     public Upload() {
         //empty constructor needed
     }
@@ -24,6 +25,7 @@ public class Upload {
         mImageUrl = imageUrl;
         number_likes=number_likes1;
         id=idd;
+
 
     }
 
@@ -64,4 +66,6 @@ public class Upload {
     public void setId(String id) {
         this.id = id;
     }
+
+
 }

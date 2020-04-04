@@ -1,45 +1,30 @@
 package com.example.newhistogram;
 
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.media.Image;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ImagesActivity extends AppCompatActivity implements ImageAdapter.onlikeclic {
 
@@ -47,17 +32,16 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
     private ImageAdapter mAdapter;
     private ProgressBar mProgressCircle;
     private DatabaseReference mDatabaseRef;
-    private FirebaseDatabase mfiredatabase;
+
 
     private List<Upload> uploads ;
 
     private int position_of_image;
-    String image_liked_url;
-    int No_likes=0;
 
-  //  firebase for like node
-    private DatabaseReference   likereference;
-    private  FirebaseAuth mAuth;
+
+
+
+
 
 
     @Override
@@ -76,6 +60,7 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
 
         mProgressCircle = findViewById(R.id.progress_circle);
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
+
 
 
 
@@ -109,13 +94,27 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
     ///interface to get position
     @Override
     public void onitemclick(int position) {
+
         position_of_image=position;
-        int num=uploads.get(position_of_image).getNumber_likes();
-        int num2=num++;
-        int num1=uploads.get(position_of_image).setNumber_likes(num2);
-        Toast.makeText(this, ""+num1, Toast.LENGTH_SHORT).show();
+        int num1=uploads.get(position_of_image).getNumber_likes();
+        uploads.get(position_of_image).setNumber_likes(num1+1);
+
+       String id=uploads.get(position_of_image).getId();
+       int number= uploads.get(position_of_image).getNumber_likes();
+       String name= uploads.get(position_of_image).getName();
+       String url=uploads.get(position_of_image).getImageUrl();
+
+       //updating the tables
+
+     Map<String,Object> map=new HashMap<>();
+     map.put(id,new Upload(name,url,number,id));
+    //  mDatabaseRef.child(id).child("number_likes").setValue(number);
+        mDatabaseRef.updateChildren(map);
+
+
 
     }
+
 
 
 }
