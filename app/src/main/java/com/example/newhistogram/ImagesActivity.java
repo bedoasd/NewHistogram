@@ -2,31 +2,56 @@ package com.example.newhistogram;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuView;
+import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.view.View;
 
+import android.webkit.MimeTypeMap;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import android.widget.Toast;
 
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ImagesActivity extends AppCompatActivity implements ImageAdapter.onlikeclic {
+public class ImagesActivity extends AppCompatActivity implements ImageAdapter.onlikeclic,ImageAdapter.onshareclick {
 
     private RecyclerView mRecyclerView;
     private ImageAdapter mAdapter;
@@ -34,14 +59,12 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
     private DatabaseReference mDatabaseRef;
 
 
-    private List<Upload> uploads ;
+    private List<Upload> uploads;
 
     private int position_of_image;
 
 
-
-
-
+    String url;
 
 
     @Override
@@ -52,19 +75,17 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
 
         mRecyclerView = findViewById(R.id.recycler);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
         linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setReverseLayout(true);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-
-
         mProgressCircle = findViewById(R.id.progress_circle);
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
 
-
-
         uploads = new ArrayList<>();
+
 
         mDatabaseRef.addValueEventListener(new ValueEventListener() {
 
@@ -73,12 +94,16 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Upload upload = postSnapshot.getValue(Upload.class);
                     uploads.add(upload);
-                }
 
+                }
                 mAdapter = new ImageAdapter(ImagesActivity.this, uploads);
 
                 mRecyclerView.setAdapter(mAdapter);
+                //interface
                 mAdapter.setonitemclicklistener(ImagesActivity.this);
+                //interface
+                mAdapter.setonshareclicked(ImagesActivity.this);
+
                 mProgressCircle.setVisibility(View.INVISIBLE);
 
             }
@@ -91,33 +116,45 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
         });
     }
 
+
     ///interface to get position
     @Override
     public void onitemclick(int position) {
 
-        position_of_image=position;
-        int num1=uploads.get(position_of_image).getNumber_likes();
-        uploads.get(position_of_image).setNumber_likes(num1+1);
+        position_of_image = position;
+        int num1 = uploads.get(position_of_image).getNumber_likes();
+        uploads.get(position_of_image).setNumber_likes(num1 + 1);
 
-       String id=uploads.get(position_of_image).getId();
-       int number= uploads.get(position_of_image).getNumber_likes();
-       String name= uploads.get(position_of_image).getName();
-       String url=uploads.get(position_of_image).getImageUrl();
+        String id = uploads.get(position_of_image).getId();
+        int number = uploads.get(position_of_image).getNumber_likes();
+        String name = uploads.get(position_of_image).getName();
+        url = uploads.get(position_of_image).getImageUrl();
 
-       //updating the tables
+        //updating the tables
 
-     Map<String,Object> map=new HashMap<>();
-     map.put(id,new Upload(name,url,number,id));
-    //  mDatabaseRef.child(id).child("number_likes").setValue(number);
+        Map<String, Object> map = new HashMap<>();
+        map.put(id, new Upload(name, url, number, id));
+        //  mDatabaseRef.child(id).child("number_likes").setValue(number);
+        uploads.clear();
         mDatabaseRef.updateChildren(map);
-
-
+        mRecyclerView.smoothScrollToPosition(position_of_image);
 
     }
 
-
+    @Override
+    public void onshareiconclicked(int position) {
+     //   int pos = position;
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(this.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(url, url);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(this, "Image Copied", Toast.LENGTH_SHORT).show();
+    }
 
 }
+
+
+
+
 
 
        /* @Override
