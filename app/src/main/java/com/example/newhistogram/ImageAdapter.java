@@ -26,6 +26,7 @@ import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.android.AndroidEventTarget;
 import com.squareup.picasso.Picasso;
 
@@ -43,14 +44,16 @@ import java.util.logging.LogRecord;
     private Context mContext;
     private List<Upload> mUploads;
     private  onlikeclic  mlistener;
-    private onshareclick sharelistenr;
-    public ImageAdapter(Context context, List<Upload> uploads) {
+    public ImageAdapter(Context context, List<Upload> uploads,onlikeclic mlistener) {
         mContext = context;
         mUploads = uploads;
+        this.mlistener=mlistener;
 
     }
 
-    @Override
+
+
+        @Override
     public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(mContext).inflate(R.layout.image_item, parent, false);
         return new ImageViewHolder(v);
@@ -71,6 +74,22 @@ import java.util.logging.LogRecord;
 
         holder.NO_likes.setText(String.valueOf(uploadCurrent.getNumber_likes()));
 
+        holder.like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    mlistener.onitemclick(position);
+
+            }
+        });
+        holder.share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                        mlistener.onshare(position);
+
+
+            }
+        });
 
     }
 
@@ -80,14 +99,12 @@ import java.util.logging.LogRecord;
     }
 
 
-    public class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ImageViewHolder extends RecyclerView.ViewHolder{
         public TextView textViewName;
         public ImageView imageView;
         public TextView NO_likes;
         private ImageView like;
         private ImageView share;
-
-
         public ImageViewHolder(View itemView) {
             super(itemView);
 
@@ -98,27 +115,10 @@ import java.util.logging.LogRecord;
             like = itemView.findViewById(R.id.like);
             share=itemView.findViewById(R.id.share);
 
-            like.setOnClickListener(this);
-            share.setOnClickListener(this);
+
 
         }
 
-
-        @Override
-        public void onClick(View v) {
-        if (mlistener!=null){
-            int position=getAdapterPosition();
-            if (position!=RecyclerView.NO_POSITION){
-                mlistener.onitemclick(position);
-            }
-
-        }
-        if (sharelistenr!=null){
-            int pos=getAdapterPosition();
-            if (pos!=RecyclerView.NO_POSITION){
-                sharelistenr.onshareiconclicked(pos);
-            }
-        }
 
 
         }
@@ -126,23 +126,17 @@ import java.util.logging.LogRecord;
     }
 
 
-    public interface  onlikeclic{
+     interface  onlikeclic{
         void onitemclick(int position);
-
+        void onshare(int position);
 
     }
-    public void setonitemclicklistener(onlikeclic listener){
-        mlistener=listener;
-    }
 
-    public interface onshareclick{
-        void onshareiconclicked(int position);
-    }
-    public void setonshareclicked(onshareclick sharelistene){
-        sharelistenr=sharelistene;
-    }
 
-}
+
+
+
+
 
 
 

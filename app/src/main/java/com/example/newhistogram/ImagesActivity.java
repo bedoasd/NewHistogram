@@ -51,7 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ImagesActivity extends AppCompatActivity implements ImageAdapter.onlikeclic,ImageAdapter.onshareclick {
+public class ImagesActivity extends AppCompatActivity  {
 
     private RecyclerView mRecyclerView;
     private ImageAdapter mAdapter;
@@ -96,14 +96,19 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
                     uploads.add(upload);
 
                 }
-                mAdapter = new ImageAdapter(ImagesActivity.this, uploads);
+                mAdapter = new ImageAdapter(ImagesActivity.this, uploads, new onlikeclic() {
+                    @Override
+                    public void onitemclick(int position) {
+                        onitemclickmethod(position);
+                    }
+
+                    @Override
+                    public void onshare(int position) {
+                        onsharemethode(position);
+                    }
+                });
 
                 mRecyclerView.setAdapter(mAdapter);
-                //interface
-                mAdapter.setonitemclicklistener(ImagesActivity.this);
-                //interface
-                mAdapter.setonshareclicked(ImagesActivity.this);
-
                 mProgressCircle.setVisibility(View.INVISIBLE);
 
             }
@@ -118,8 +123,8 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
 
 
     ///interface to get position
-    @Override
-    public void onitemclick(int position) {
+
+    public void onitemclickmethod(int position) {
 
         position_of_image = position;
         int num1 = uploads.get(position_of_image).getNumber_likes();
@@ -141,14 +146,15 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.on
 
     }
 
-    @Override
-    public void onshareiconclicked(int position) {
-     //   int pos = position;
+
+    public void onsharemethode(int position) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(this.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(url, url);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(this, "Image Copied", Toast.LENGTH_SHORT).show();
     }
+
+
 
 }
 
