@@ -33,7 +33,9 @@
         android:id="@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="349dp"
-        android:layout_marginTop="16dp"></ImageView>
+        android:layout_marginTop="16dp">
+
+    </ImageView>
 
     <ProgressBar
         android:id="@+id/progrees_bar"
